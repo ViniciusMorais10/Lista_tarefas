@@ -18,12 +18,11 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final _toDoController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
 
-    _readData().then((data){
+    _readData().then((data) {
       setState(() {
         _toDoList = json.decode(data);
       });
@@ -84,33 +83,36 @@ class _HomeState extends State<Home> {
     );
   }
 
-Widget buildItem (context, index){
+  Widget buildItem(context, index) {
     return Dismissible(
+      key: Key(DateTime.now().millisecond.toString()),
       background: Container(
         color: Colors.redAccent,
         child: Align(
-
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
         ),
       ),
+      direction: DismissDirection.startToEnd,
+      child: CheckboxListTile(
+        title: Text(_toDoList[index]["title"]),
+        value: _toDoList[index]["ok"],
+        secondary: CircleAvatar(
+          child:
+              Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error_outline),
+        ),
+        onChanged: (c) {
+          setState(() {
+            _toDoList[index]["ok"] = c;
+            _saveData();
+          });
+        },
+      ),
     );
-}
-
-
-  /*return CheckboxListTile(
-  title: Text(_toDoList[index]["title"]),
-  value: _toDoList[index]["ok"],
-  secondary: CircleAvatar(
-  child: Icon(_toDoList[index]["ok"]
-  ? Icons.check
-      : Icons.error_outline),
-  ),
-  onChanged: (c) {
-  setState(() {
-  _toDoList[index]["ok"] = c;
-  _saveData();
-  });
-  },
-  );*/
+  }
 
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
